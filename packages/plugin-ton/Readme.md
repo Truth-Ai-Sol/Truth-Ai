@@ -1,124 +1,235 @@
-# Plugin TON
+# @elizaos/plugin-ton
 
-A plugin for handling TON (Telegram Open Network) blockchain operations, such as wallet management and transfers.
+A plugin for handling TON (Telegram Open Network) blockchain operations, providing wallet management and transfer capabilities.
 
-## Overview and Purpose
+## Overview
 
-The Plugin TON provides a streamlined interface to interact with the TON blockchain. It simplifies wallet management and facilitates secure, efficient transfers while maintaining compatibility with TypeScript and modern JavaScript development practices.
+This plugin provides functionality to:
+- Manage TON wallets and key derivation
+- Execute secure token transfers
+- Query wallet balances and portfolio information
+- Format and cache transaction data
+- Interface with TON blockchain via RPC endpoints
 
 ## Installation
 
-Install the plugin using npm:
-
 ```bash
-npm install plugin-ton
+npm install @elizaos/plugin-ton
 ```
 
-## Configuration Requirements
+## Configuration
 
-Ensure your environment is set up with the necessary configuration files and environment variables. Update the `src/enviroment.ts` file or set environment variables directly for sensitive information.
+The plugin requires the following environment variables:
 
-### Environment Variables
+```env
+TON_PRIVATE_KEY=your_mnemonic_phrase  # Required - wallet mnemonic words
+TON_RPC_URL=your_rpc_endpoint  # Optional - defaults to mainnet RPC
+```
 
-| Variable Name            | Description                           |
-| ------------------------ | ------------------------------------- |
-| `TON_API_ENDPOINT`       | API endpoint for interacting with TON |
-| `TON_WALLET_PRIVATE_KEY` | Private key for wallet operations     |
+## Usage
 
-## Usage Examples
-
-### Importing the Plugin
+Import and register the plugin in your Eliza configuration:
 
 ```typescript
-import { WalletProvider, TransferAction } from 'plugin-ton';
+import { tonPlugin } from "@elizaos/plugin-ton";
 
-// Initialize wallet provider
-const wallet = new WalletProvider('YOUR_PRIVATE_KEY');
-
-// Fetch wallet balance
-const balance = await wallet.getBalance();
-console.log('Wallet Balance:', balance);
-
-// Transfer TON coins
-const transfer = new TransferAction(wallet);
-await transfer.execute({
-  to: 'RECIPIENT_ADDRESS',
-  amount: 10,
-});
-console.log('Transfer successful');
+export default {
+  plugins: [tonPlugin],
+  // ... other configuration
+};
 ```
 
-## API Reference
+## Features
 
 ### WalletProvider
 
-#### Methods:
+The `WalletProvider` manages wallet operations and portfolio tracking:
 
-- `constructor(privateKey: string)` - Initializes the wallet with a private key.
-- `getBalance(): Promise<number>` - Retrieves the wallet balance.
+```typescript
+import { WalletProvider } from "@elizaos/plugin-ton";
+
+// Initialize the provider
+const provider = await initWalletProvider(runtime);
+
+// Get wallet balance
+const balance = await provider.getWalletBalance();
+
+// Get formatted portfolio
+const portfolio = await provider.getFormattedPortfolio(runtime);
+```
 
 ### TransferAction
 
-#### Methods:
+The `TransferAction` handles token transfers:
 
-- `constructor(wallet: WalletProvider)` - Initializes the transfer action.
-- `execute({ to: string, amount: number }): Promise<void>` - Executes a transfer of TON coins.
+```typescript
+import { TransferAction } from "@elizaos/plugin-ton";
+
+// Initialize transfer action
+const action = new TransferAction(walletProvider);
+
+// Execute transfer
+const hash = await action.transfer({
+    recipient: "EQCGScrZe1xbyWqWDvdI6mzP-GAcAWFv6ZXuaJOuSqemxku4",
+    amount: "1.5"
+});
+```
+
+## Development
+
+### Building
+
+```bash
+npm run build
+```
+
+### Testing
+
+```bash
+npm run test
+```
+
+## Dependencies
+
+- `@ton/ton`: Core TON blockchain functionality
+- `@ton/crypto`: Cryptographic operations
+- `bignumber.js`: Precise number handling
+- `node-cache`: Caching functionality
+- Other standard dependencies listed in package.json
+
+## API Reference
+
+### Providers
+
+- `walletProvider`: Manages TON wallet operations
+- `nativeWalletProvider`: Handles native TON token operations
+
+### Types
+
+```typescript
+interface TransferContent {
+    recipient: string;
+    amount: string | number;
+}
+
+interface WalletPortfolio {
+    totalUsd: string;
+    totalNativeToken: string;
+}
+
+interface Prices {
+    nativeToken: { usd: string };
+}
+```
+
+### Configuration Constants
+
+```typescript
+const PROVIDER_CONFIG = {
+    MAINNET_RPC: "https://toncenter.com/api/v2/jsonRPC",
+    STONFI_TON_USD_POOL: "EQCGScrZe1xbyWqWDvdI6mzP-GAcAWFv6ZXuaJOuSqemxku4",
+    CHAIN_NAME_IN_DEXSCREENER: "ton",
+    MAX_RETRIES: 3,
+    RETRY_DELAY: 2000,
+    TON_DECIMAL: BigInt(1000000000)
+};
+```
 
 ## Common Issues/Troubleshooting
 
 ### Issue: Balance Fetching Failure
-
-- **Cause**: Incorrect API endpoint or private key.
-- **Solution**: Verify `TON_API_ENDPOINT` and private key in your configuration.
+- **Cause**: Incorrect RPC endpoint or network connectivity issues
+- **Solution**: Verify `TON_RPC_URL` and network connection
 
 ### Issue: Transfer Fails
+- **Cause**: Insufficient balance or invalid recipient address
+- **Solution**: Ensure sufficient funds and valid recipient address format
 
-- **Cause**: Insufficient balance or invalid recipient address.
-- **Solution**: Ensure sufficient funds and a valid recipient address.
+## Security Best Practices
 
-## Additional Documentation
+- Store private keys securely using environment variables
+- Validate all input addresses and amounts
+- Use proper error handling for blockchain operations
+- Keep dependencies updated for security patches
 
-### Examples Folder Documentation
+## Future Enhancements
 
-The examples folder includes sample scripts demonstrating wallet initialization, balance checking, and transfers. Use these as a starting point for your integration.
+1. **Wallet Management**
+   - Multi-wallet support
+   - Hardware wallet integration
+   - Advanced key management
+   - Batch transaction processing
+   - Custom wallet contracts
+   - Recovery mechanisms
 
-### Testing Guide Expansion
+2. **Smart Contract Integration**
+   - Contract deployment tools
+   - FunC contract templates
+   - Testing framework
+   - Upgrade management
+   - Gas optimization
+   - Security analysis
 
-Run tests using the following command:
+3. **Token Operations**
+   - Jetton creation tools
+   - NFT support enhancement
+   - Token metadata handling
+   - Collection management
+   - Batch transfers
+   - Token standards
 
-```bash
-npm test
-```
+4. **DeFi Features**
+   - DEX integration
+   - Liquidity management
+   - Yield farming tools
+   - Price feed integration
+   - Swap optimization
+   - Portfolio tracking
 
-The `src/tests/wallet.test.ts` file provides unit tests for wallet functionality. Add tests for additional features as needed.
+5. **Developer Tools**
+   - Enhanced debugging
+   - CLI improvements
+   - Documentation generator
+   - Integration templates
+   - Performance monitoring
+   - Testing utilities
 
-### Plugin Development Guide
+6. **Network Features**
+   - Workchain support
+   - Sharding optimization
+   - RPC management
+   - Network monitoring
+   - Archive node integration
+   - Custom endpoints
 
-1. Clone the repository.
-2. Run `npm install` to install dependencies.
-3. Use `tsup` for building the project: `npm run build`.
-4. Add new features in the `src` directory.
-
-### Security Best Practices
-
-- **Key Management**: Use environment variables for sensitive information like private keys.
-- **Testing**: Validate all inputs to prevent injection attacks.
-- **Dependencies**: Regularly update dependencies to patch vulnerabilities.
-
-### Performance Optimization Guide
-
-- Use efficient data structures for large transactions.
-- Avoid unnecessary API calls by caching frequent responses.
-- Use async/await for optimal asynchronous operations.
+We welcome community feedback and contributions to help prioritize these enhancements.
 
 ## Contributing
 
-1. Fork the repository.
-2. Create your feature branch (`git checkout -b feature/amazing-feature`).
-3. Commit your changes (`git commit -m 'Add some amazing feature'`).
-4. Push to the branch (`git push origin feature/amazing-feature`).
-5. Open a Pull Request.
+Contributions are welcome! Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
+
+## Credits
+
+This plugin integrates with and builds upon several key technologies:
+
+- [TON Blockchain](https://ton.org/): The Open Network blockchain platform
+- [@ton/ton](https://www.npmjs.com/package/@ton/ton): Core TON blockchain functionality
+- [@ton/crypto](https://www.npmjs.com/package/@ton/crypto): Cryptographic operations
+- [bignumber.js](https://github.com/MikeMcl/bignumber.js/): Precise number handling
+- [node-cache](https://github.com/node-cache/node-cache): Caching functionality
+
+Special thanks to:
+- The TON Foundation for developing and maintaining the TON blockchain
+- The TON Developer community
+- The TON SDK maintainers
+- The Eliza community for their contributions and feedback
+
+For more information about TON blockchain capabilities:
+- [TON Documentation](https://docs.ton.org/)
+- [TON Developer Portal](https://ton.org/dev)
+- [TON Whitepaper](https://ton.org/whitepaper.pdf)
+- [TON API Reference](https://ton.org/docs/#/api)
 
 ## License
 
-MIT
+This plugin is part of the Eliza project. See the main project repository for license information.

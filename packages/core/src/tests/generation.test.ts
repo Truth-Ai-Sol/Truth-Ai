@@ -7,7 +7,6 @@ import {
     splitChunks,
     trimTokens,
 } from "../generation";
-import type { TiktokenModel } from "js-tiktoken";
 
 // Mock the elizaLogger
 vi.mock("../index.ts", () => ({
@@ -130,30 +129,28 @@ describe("Generation", () => {
     });
 
     describe("trimTokens", () => {
-        const model = "gpt-4" as TiktokenModel;
-
-        it("should return empty string for empty input", () => {
-            const result = trimTokens("", 100, model);
+        it("should return empty string for empty input", async () => {
+            const result = await trimTokens("", 100, mockRuntime);
             expect(result).toBe("");
         });
 
-        it("should throw error for negative maxTokens", () => {
-            expect(() => trimTokens("test", -1, model)).toThrow(
+        it("should throw error for negative maxTokens", async () => {
+            await expect(trimTokens("test", -1, mockRuntime)).rejects.toThrow(
                 "maxTokens must be positive"
             );
         });
 
-        it("should return unchanged text if within token limit", () => {
+        it("should return unchanged text if within token limit", async () => {
             const shortText = "This is a short text";
-            const result = trimTokens(shortText, 10, model);
+            const result = await trimTokens(shortText, 10, mockRuntime);
             expect(result).toBe(shortText);
         });
 
-        it("should truncate text to specified token limit", () => {
+        it("should truncate text to specified token limit", async () => {
             // Using a longer text that we know will exceed the token limit
             const longText =
                 "This is a much longer text that will definitely exceed our very small token limit and need to be truncated to fit within the specified constraints.";
-            const result = trimTokens(longText, 5, model);
+            const result = await trimTokens(longText, 5, mockRuntime);
 
             // The exact result will depend on the tokenizer, but we can verify:
             // 1. Result is shorter than original
@@ -164,19 +161,19 @@ describe("Generation", () => {
             expect(longText.includes(result)).toBe(true);
         });
 
-        it("should handle non-ASCII characters", () => {
+        it("should handle non-ASCII characters", async () => {
             const unicodeText = "Hello 👋 World 🌍";
-            const result = trimTokens(unicodeText, 5, model);
+            const result = await trimTokens(unicodeText, 5, mockRuntime);
             expect(result.length).toBeGreaterThan(0);
         });
 
-        it("should handle multiline text", () => {
+        it("should handle multiline text", async () => {
             const multilineText = `Line 1
 	Line 2
 	Line 3
 	Line 4
 	Line 5`;
-            const result = trimTokens(multilineText, 5, model);
+            const result = await trimTokens(multilineText, 5, mockRuntime);
             expect(result.length).toBeGreaterThan(0);
             expect(result.length).toBeLessThan(multilineText.length);
         });

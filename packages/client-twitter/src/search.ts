@@ -1,5 +1,5 @@
 import { SearchMode } from "agent-twitter-client";
-import {composeContext, elizaLogger} from "@elizaos/core";
+import { composeContext, elizaLogger } from "@elizaos/core";
 import { generateMessageResponse, generateText } from "@elizaos/core";
 import { messageCompletionFooter } from "@elizaos/core";
 import {
@@ -40,6 +40,8 @@ Aim for 1-2 short sentences maximum. Be concise and direct.
 
 Your response should not contain any questions. Brief, concise statements only. No emojis. Use \\n\\n (double spaces) between statements.
 
+Use these terms to guide your response but only if they are relevant to the post:
+{{terms}}
 ` + messageCompletionFooter;
 
 export class TwitterSearchClient {
@@ -60,8 +62,10 @@ export class TwitterSearchClient {
 
     private engageWithSearchTermsLoop() {
         this.engageWithSearchTerms().then();
-        const randomMinutes = (Math.floor(Math.random() * (120 - 60 + 1)) + 60);
-        elizaLogger.log(`Next twitter search scheduled in ${randomMinutes} minutes`);
+        const randomMinutes = Math.floor(Math.random() * (120 - 60 + 1)) + 60;
+        elizaLogger.log(
+            `Next twitter search scheduled in ${randomMinutes} minutes`
+        );
         setTimeout(
             () => this.engageWithSearchTermsLoop(),
             randomMinutes * 60 * 1000

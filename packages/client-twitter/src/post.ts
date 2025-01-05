@@ -43,21 +43,30 @@ export const twitterActionTemplate =
 {{bio}}
 {{postDirections}}
 
+Use these terms to guide your response but only if they are relevant to the post:
+{{terms}}
+
 Guidelines:
-- Highly selective engagement
-- Direct mentions are priority
-- Skip: low-effort content, off-topic, repetitive
+- ONLY engage with content that DIRECTLY relates to character's core interests
+- Direct mentions are priority IF they are on-topic
+- Skip ALL content that is:
+  - Off-topic or tangentially related
+  - From high-profile accounts unless explicitly relevant
+  - Generic/viral content without specific relevance
+  - Political/controversial unless central to character
+  - Promotional/marketing unless directly relevant
 
 Actions (respond only with tags):
-[LIKE] - Resonates with interests (9.5/10)
-[RETWEET] - Perfect character alignment (9/10)
-[QUOTE] - Can add unique value (8/10)
-[REPLY] - Memetic opportunity (9/10)
+[LIKE] - Perfect topic match AND aligns with character (9.8/10)
+[RETWEET] - Exceptional content that embodies character's expertise (9.5/10)
+[QUOTE] - Can add substantial domain expertise (9.5/10)
+[REPLY] - Can contribute meaningful, expert-level insight (9.5/10)
 
 Tweet:
 {{currentTweet}}
 
-# Respond with qualifying action tags only.` + postActionResponseFooter;
+# Respond with qualifying action tags only. Default to NO action unless extremely confident of relevance.` +
+    postActionResponseFooter;
 
 /**
  * Truncate text to fit within the Twitter character limit, ensuring it ends at a complete sentence.
@@ -106,7 +115,7 @@ export class TwitterPostClient {
         this.client = client;
         this.runtime = runtime;
         this.twitterUsername = this.client.twitterConfig.TWITTER_USERNAME;
-        this.isDryRun = this.client.twitterConfig.TWITTER_DRY_RUN
+        this.isDryRun = this.client.twitterConfig.TWITTER_DRY_RUN;
 
         // Log configuration on initialization
         elizaLogger.log("Twitter Client Configuration:");
@@ -121,7 +130,7 @@ export class TwitterPostClient {
             `- Action Processing: ${this.client.twitterConfig.ENABLE_ACTION_PROCESSING ? "enabled" : "disabled"}`
         );
         elizaLogger.log(
-            `- Action Interval: ${this.client.twitterConfig.ACTION_INTERVAL} seconds`
+            `- Action Interval: ${this.client.twitterConfig.ACTION_INTERVAL} minutes`
         );
         elizaLogger.log(
             `- Post Immediately: ${this.client.twitterConfig.POST_IMMEDIATELY ? "enabled" : "disabled"}`
@@ -180,11 +189,12 @@ export class TwitterPostClient {
                     if (results) {
                         elizaLogger.log(`Processed ${results.length} tweets`);
                         elizaLogger.log(
-                            `Next action processing scheduled in ${actionInterval / 1000} seconds`
+                            `Next action processing scheduled in ${actionInterval} minutes`
                         );
                         // Wait for the full interval before next processing
-                        await new Promise((resolve) =>
-                            setTimeout(resolve, actionInterval * 60 * 1000) // now in minutes
+                        await new Promise(
+                            (resolve) =>
+                                setTimeout(resolve, actionInterval * 60 * 1000) // now in minutes
                         );
                     }
                 } catch (error) {
@@ -210,7 +220,10 @@ export class TwitterPostClient {
             elizaLogger.log("Tweet generation loop disabled (dry run mode)");
         }
 
-        if (this.client.twitterConfig.ENABLE_ACTION_PROCESSING && !this.isDryRun) {
+        if (
+            this.client.twitterConfig.ENABLE_ACTION_PROCESSING &&
+            !this.isDryRun
+        ) {
             processActionsLoop().catch((error) => {
                 elizaLogger.error(
                     "Fatal error in process actions loop:",
@@ -459,7 +472,7 @@ export class TwitterPostClient {
                     .replace(/^\s*{?\s*"text":\s*"|"\s*}?\s*$/g, "") // Remove JSON-like wrapper
                     .replace(/^['"](.*)['"]$/g, "$1") // Remove quotes
                     .replace(/\\"/g, '"') // Unescape quotes
-                    .replace(/\\n/g, "\n") // Unescape newlines
+                    .replace(/\\n/g, "\n\n") // Unescape newlines, ensures double spaces
                     .trim();
             }
 
@@ -475,7 +488,7 @@ export class TwitterPostClient {
             }
 
             // Truncate the content to the maximum tweet length specified in the environment settings, ensuring the truncation respects sentence boundaries.
-            const maxTweetLength = this.client.twitterConfig.MAX_TWEET_LENGTH
+            const maxTweetLength = this.client.twitterConfig.MAX_TWEET_LENGTH;
             if (maxTweetLength) {
                 cleanedContent = truncateToCompleteSentence(
                     cleanedContent,
@@ -486,7 +499,7 @@ export class TwitterPostClient {
             const removeQuotes = (str: string) =>
                 str.replace(/^['"](.*)['"]$/, "$1");
 
-            const fixNewLines = (str: string) => str.replaceAll(/\\n/g, "\n");
+            const fixNewLines = (str: string) => str.replaceAll(/\\n/g, "\n\n"); //ensures double spaces
 
             // Final cleaning
             cleanedContent = removeQuotes(fixNewLines(cleanedContent));

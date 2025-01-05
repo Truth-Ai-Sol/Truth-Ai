@@ -16,7 +16,8 @@ export const models: Models = {
             [ModelClass.SMALL]: settings.SMALL_OPENAI_MODEL || "gpt-4o-mini",
             [ModelClass.MEDIUM]: settings.MEDIUM_OPENAI_MODEL || "gpt-4o",
             [ModelClass.LARGE]: settings.LARGE_OPENAI_MODEL || "gpt-4o",
-            [ModelClass.EMBEDDING]: settings.EMBEDDING_OPENAI_MODEL || "text-embedding-3-small",
+            [ModelClass.EMBEDDING]:
+                settings.EMBEDDING_OPENAI_MODEL || "text-embedding-3-small",
             [ModelClass.IMAGE]: settings.IMAGE_OPENAI_MODEL || "dall-e-3",
         },
     },
@@ -55,9 +56,12 @@ export const models: Models = {
         },
         endpoint: "https://api.anthropic.com/v1",
         model: {
-            [ModelClass.SMALL]: settings.SMALL_ANTHROPIC_MODEL || "claude-3-haiku-20240307",
-            [ModelClass.MEDIUM]: settings.MEDIUM_ANTHROPIC_MODEL || "claude-3-5-sonnet-20241022",
-            [ModelClass.LARGE]: settings.LARGE_ANTHROPIC_MODEL || "claude-3-5-sonnet-20241022",
+            [ModelClass.SMALL]:
+                settings.SMALL_ANTHROPIC_MODEL || "claude-3-5-sonnet-20241022",
+            [ModelClass.MEDIUM]:
+                settings.MEDIUM_ANTHROPIC_MODEL || "claude-3-5-sonnet-20241022",
+            [ModelClass.LARGE]:
+                settings.LARGE_ANTHROPIC_MODEL || "claude-3-5-sonnet-20241022",
         },
     },
     [ModelProviderName.CLAUDE_VERTEX]: {
@@ -90,7 +94,8 @@ export const models: Models = {
             [ModelClass.SMALL]: settings.SMALL_GROK_MODEL || "grok-2-1212",
             [ModelClass.MEDIUM]: settings.MEDIUM_GROK_MODEL || "grok-2-1212",
             [ModelClass.LARGE]: settings.LARGE_GROK_MODEL || "grok-2-1212",
-            [ModelClass.EMBEDDING]: settings.EMBEDDING_GROK_MODEL || "grok-2-1212", // not sure about this one
+            [ModelClass.EMBEDDING]:
+                settings.EMBEDDING_GROK_MODEL || "grok-2-1212", // not sure about this one
         },
     },
     [ModelProviderName.GROQ]: {
@@ -395,7 +400,9 @@ export const models: Models = {
         },
     },
     [ModelProviderName.VOLENGINE]: {
-        endpoint: "https://open.volcengineapi.com/api/v3/",
+        endpoint:
+            settings.VOLENGINE_API_URL ||
+            "https://open.volcengineapi.com/api/v3/",
         settings: {
             stop: [],
             maxInputTokens: 128000,
@@ -405,10 +412,20 @@ export const models: Models = {
             temperature: 0.6,
         },
         model: {
-            [ModelClass.SMALL]: "doubao-lite-128k",
-            [ModelClass.MEDIUM]: "doubao-pro-128k",
-            [ModelClass.LARGE]: "doubao-pro-128k",
-            [ModelClass.EMBEDDING]: "doubao-embedding",
+            [ModelClass.SMALL]:
+                settings.SMALL_VOLENGINE_MODEL ||
+                settings.VOLENGINE_MODEL ||
+                "doubao-lite-128k",
+            [ModelClass.MEDIUM]:
+                settings.MEDIUM_VOLENGINE_MODEL ||
+                settings.VOLENGINE_MODEL ||
+                "doubao-pro-128k",
+            [ModelClass.LARGE]:
+                settings.LARGE_VOLENGINE_MODEL ||
+                settings.VOLENGINE_MODEL ||
+                "doubao-pro-256k",
+            [ModelClass.EMBEDDING]:
+                settings.VOLENGINE_EMBEDDING_MODEL || "doubao-embedding",
         },
     },
     [ModelProviderName.NANOGPT]: {
@@ -425,7 +442,7 @@ export const models: Models = {
             [ModelClass.SMALL]: settings.SMALL_NANOGPT_MODEL || "gpt-4o-mini",
             [ModelClass.MEDIUM]: settings.MEDIUM_NANOGPT_MODEL || "gpt-4o",
             [ModelClass.LARGE]: settings.LARGE_NANOGPT_MODEL || "gpt-4o",
-        }
+        },
     },
     [ModelProviderName.HYPERBOLIC]: {
         endpoint: "https://api.hyperbolic.xyz/v1",
@@ -461,7 +478,8 @@ export const models: Models = {
         },
         model: {
             [ModelClass.SMALL]: settings.SMALL_VENICE_MODEL || "llama-3.3-70b",
-            [ModelClass.MEDIUM]: settings.MEDIUM_VENICE_MODEL || "llama-3.3-70b",
+            [ModelClass.MEDIUM]:
+                settings.MEDIUM_VENICE_MODEL || "llama-3.3-70b",
             [ModelClass.LARGE]: settings.LARGE_VENICE_MODEL || "llama-3.1-405b",
             [ModelClass.IMAGE]: settings.IMAGE_VENICE_MODEL || "fluently-xl",
         },
@@ -500,7 +518,8 @@ export const models: Models = {
             [ModelClass.MEDIUM]: "",
             [ModelClass.LARGE]: "",
             [ModelClass.EMBEDDING]: "",
-            [ModelClass.IMAGE]: settings.LIVEPEER_IMAGE_MODEL || "ByteDance/SDXL-Lightning",
+            [ModelClass.IMAGE]:
+                settings.LIVEPEER_IMAGE_MODEL || "ByteDance/SDXL-Lightning",
         },
     },
 };

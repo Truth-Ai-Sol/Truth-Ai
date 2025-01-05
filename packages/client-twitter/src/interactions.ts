@@ -51,6 +51,9 @@ Thread of Tweets You Are Replying To:
 {{actionNames}}
 {{actions}}
 
+Use these terms to guide your response but only if they are relevant to the post:
+{{terms}}
+
 Here is the current post text again. Remember to include an action if the current post text includes a prompt that asks for one of the available actions mentioned above (does not need to be exact)
 {{currentPost}}
 ` + messageCompletionFooter;
@@ -128,7 +131,8 @@ export class TwitterInteractionClient {
             let uniqueTweetCandidates = [...mentionCandidates];
             // Only process target users if configured
             if (this.client.twitterConfig.TWITTER_TARGET_USERS.length) {
-                const TARGET_USERS = this.client.twitterConfig.TWITTER_TARGET_USERS;
+                const TARGET_USERS =
+                    this.client.twitterConfig.TWITTER_TARGET_USERS;
 
                 elizaLogger.log("Processing target users:", TARGET_USERS);
 
@@ -378,7 +382,8 @@ export class TwitterInteractionClient {
         }
 
         // get usernames into str
-        const validTargetUsersStr = this.client.twitterConfig.TWITTER_TARGET_USERS.join(",");
+        const validTargetUsersStr =
+            this.client.twitterConfig.TWITTER_TARGET_USERS.join(",");
 
         const shouldRespondContext = composeContext({
             state,
