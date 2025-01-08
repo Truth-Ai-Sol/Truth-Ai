@@ -1,10 +1,19 @@
 import { Scraper } from "agent-twitter-client";
 import dotenv from "dotenv";
 import fs from "fs";
+import path from "path";
 
 dotenv.config();
 
-const TWEETS_FILE = "tweets.json";
+const TWEETS_FILE = "joerogan-tweets.json";
+
+// Ensure the output directory exists
+const outputDir = path.resolve(process.cwd(), 'data', 'scraped-tweets');
+if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+}
+
+const OUTPUT_PATH = path.join(outputDir, TWEETS_FILE);
 
 (async () => {
     try {
@@ -21,48 +30,67 @@ const TWEETS_FILE = "tweets.json";
         if (await scraper.isLoggedIn()) {
             console.log("Logged in successfully!");
 
-            // Fetch all tweets for the user "@realdonaldtrump"
-            const tweets = scraper.getTweets("pmarca", 2000);
-
             // Initialize an empty array to store the fetched tweets
             let fetchedTweets = [];
 
-            // Load existing tweets from the JSON file if it exists
-            if (fs.existsSync(TWEETS_FILE)) {
-                const fileContent = fs.readFileSync(TWEETS_FILE, "utf-8");
-                fetchedTweets = JSON.parse(fileContent);
+            // Load existing tweets if file exists
+            if (fs.existsSync(OUTPUT_PATH)) {
+                try {
+                    const fileContent = fs.readFileSync(OUTPUT_PATH, "utf-8");
+                    fetchedTweets = JSON.parse(fileContent);
+                    console.log(`Loaded ${fetchedTweets.length} existing tweets`);
+                } catch (error) {
+                    console.error("Error loading existing tweets:", error);
+                }
             }
 
-            // skip first 200
+            try {
+                console.log("Starting to fetch tweets...")
+                const tweets = scraper.getTweets("joerogan", 2000)
+                let count = 0
 
-            let count = 0;
+                for await (const tweet of tweets) {
+                    console.log(`Processing tweet ${count + 1}`)
 
-            // Fetch and process tweets
-            for await (const tweet of tweets) {
-                if (count < 1000) {
-                    count++;
-                    continue;
+                    console.log("--------------------")
+                    console.log("Tweet ID:", tweet.id)
+                    console.log("Text:", tweet.text)
+                    console.log("Created At:", tweet.createdAt)
+                    console.log("Retweets:", tweet.retweetCount)
+                    console.log("Likes:", tweet.likeCount)
+                    console.log("--------------------")
+
+                    // Add the new tweet to the fetched tweets array
+                    fetchedTweets.push(tweet)
+                    count++
+
+                    // Save after every 10 tweets
+                    if (count % 10 === 0) {
+                        try {
+                            fs.writeFileSync(
+                                OUTPUT_PATH,
+                                JSON.stringify(fetchedTweets, null, 2)
+                            )
+                            console.log(`Saved batch of ${count} tweets to ${OUTPUT_PATH}`)
+                        } catch (error) {
+                            console.error(`Error saving tweets batch ${count}:`, error)
+                        }
+                    }
                 }
 
-                console.log("--------------------");
-                console.log("Tweet ID:", tweet.id);
-                console.log("Text:", tweet.text);
-                console.log("Created At:", tweet.createdAt);
-                console.log("Retweets:", tweet.retweetCount);
-                console.log("Likes:", tweet.likeCount);
-                console.log("--------------------");
-
-                // Add the new tweet to the fetched tweets array
-                fetchedTweets.push(tweet);
-
-                // Save the updated fetched tweets to the JSON file
-                fs.writeFileSync(
-                    TWEETS_FILE,
-                    JSON.stringify(fetchedTweets, null, 2)
-                );
+                // Save any remaining tweets
+                if (fetchedTweets.length > 0) {
+                    fs.writeFileSync(
+                        OUTPUT_PATH,
+                        JSON.stringify(fetchedTweets, null, 2)
+                    )
+                    console.log(`Final save: ${fetchedTweets.length} total tweets saved to ${OUTPUT_PATH}`)
+                } else {
+                    console.log("No tweets were fetched!")
+                }
+            } catch (error) {
+                console.error("Error fetching tweets:", error);
             }
-
-            console.log("All tweets fetched and saved to", TWEETS_FILE);
 
             // Log out from Twitter
             await scraper.logout();

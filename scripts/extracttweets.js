@@ -1,32 +1,50 @@
 import fs from "fs";
 
-const EXPORTED_DATA_FILE = "tweets.json";
-const TWEETS_FILE = "exportedtweets.json";
+const SCRAPED_DATA_FILE = "data/scraped-tweets/realDonaldTrump.json";
+const TARGET_FILE = "data/extracted-tweets/realDonaldTrump.json";
 
-// Read the exported data from the JSON file
-const exportedData = JSON.parse(fs.readFileSync(EXPORTED_DATA_FILE, "utf-8"));
+// Read the scraped data from the JSON file
+const scrapedData = JSON.parse(fs.readFileSync(SCRAPED_DATA_FILE, "utf-8"));
+
+// Add debug logging
+console.log("Total tweets loaded:", scrapedData.length);
+console.log("Sample tweet:", JSON.stringify(scrapedData[0], null, 2));
+
+const usernameToMatch = "realDonaldTrump".toLowerCase();
 
 // Extract the text of each tweet
-const tweetTexts = exportedData
+const tweetTexts = scrapedData
     .map((tweet) => {
-        console.log(tweet.username);
-        if (tweet.username.toLowerCase().replace("@pmarca", "") !== "pmarca") {
+        // Add debug logging for username check
+        console.log("Checking tweet username:", tweet.username);
+
+        if (!tweet.username) {
+            console.log("No username found for tweet");
             return null;
-        } else {
-            console.log("pmarca found");
+        }
+
+        // Try both lowercase and original case matching
+        const normalizedUsername = tweet.username.toLowerCase();
+        if (normalizedUsername !== usernameToMatch) {
+            console.log("Username didn't match:", normalizedUsername);
+            return null;
         }
 
         if (tweet.isRetweet && tweet.retweetedStatus) {
-            // If the tweet is a retweet, use the text of the retweeted status
             return tweet.retweetedStatus.text;
         } else {
-            // Otherwise, use the text of the tweet itself
             return tweet.text;
         }
     })
     .filter((tweet) => tweet !== null);
 
-// Write the array of tweet texts to the tweets.json file
-fs.writeFileSync(TWEETS_FILE, JSON.stringify(tweetTexts, null, 2));
+// Add debug logging
+console.log("Extracted tweets count:", tweetTexts.length);
 
-console.log("Tweet texts extracted and saved to", TWEETS_FILE);
+// Create directory if it doesn't exist
+fs.mkdirSync("data/extracted-tweets", { recursive: true });
+
+// Write the array of tweet texts to the tweets.json file
+fs.writeFileSync(TARGET_FILE, JSON.stringify(tweetTexts, null, 2));
+
+console.log("Tweet texts extracted and saved to", TARGET_FILE);
