@@ -75,30 +75,44 @@ function splitIntoThread(content: string, maxLength: number = 280): string[] {
     }
 
     const tweets: string[] = [];
-    const words = content.split(" ");
     let currentTweet = "";
-    let tweetCount = 1;
 
-    for (const word of words) {
-        // Check if adding the word (plus thread number and space) would exceed limit
-        const prefix = `${tweetCount}) `;
-        const potentialTweet = currentTweet
-            ? `${prefix}${currentTweet} ${word}`
-            : `${prefix}${word}`;
+    // Split by double newlines first to preserve paragraph structure
+    const paragraphs = content.split(/\n\n+/);
 
-        if (potentialTweet.length <= maxLength) {
-            currentTweet = currentTweet ? `${currentTweet} ${word}` : word;
+    for (const paragraph of paragraphs) {
+        // If adding this paragraph would exceed the limit
+        if ((currentTweet + "\n\n" + paragraph).length > maxLength) {
+            // If current tweet has content, push it
+            if (currentTweet) {
+                tweets.push(currentTweet);
+                currentTweet = paragraph;
+            } else {
+                // If paragraph itself is too long, split by sentence
+                const sentences = paragraph.match(/[^.!?]+[.!?]+/g) || [
+                    paragraph,
+                ];
+                for (const sentence of sentences) {
+                    if ((currentTweet + "\n\n" + sentence).length > maxLength) {
+                        if (currentTweet) tweets.push(currentTweet);
+                        currentTweet = sentence.trim();
+                    } else {
+                        currentTweet = currentTweet
+                            ? currentTweet + "\n\n" + sentence.trim()
+                            : sentence.trim();
+                    }
+                }
+            }
         } else {
-            // Push current tweet and start new one
-            tweets.push(`${tweetCount}) ${currentTweet}`);
-            tweetCount++;
-            currentTweet = word;
+            currentTweet = currentTweet
+                ? currentTweet + "\n\n" + paragraph
+                : paragraph;
         }
     }
 
     // Add remaining content
     if (currentTweet) {
-        tweets.push(`${tweetCount}) ${currentTweet}`);
+        tweets.push(currentTweet);
     }
 
     return tweets;
@@ -386,14 +400,22 @@ export class TwitterPostClient {
         twitterUsername: string
     ) {
         try {
-            elizaLogger.log(`Posting new tweet:\n`);
+            elizaLogger.log(
+                `Attempting to post tweet with content:\n${cleanedContent}`
+            );
 
             // Split content into thread if needed
             const threadParts = splitIntoThread(cleanedContent);
+            elizaLogger.log(
+                `Split into ${threadParts.length} parts:`,
+                threadParts
+            );
+
             let previousTweetId: string | undefined;
 
             // Post each part of the thread
             for (const content of threadParts) {
+                elizaLogger.log(`Posting thread part:\n${content}`);
                 const result = await this.sendStandardTweet(
                     client,
                     content,
@@ -401,7 +423,7 @@ export class TwitterPostClient {
                 );
 
                 if (!result) {
-                    throw new Error("Failed to post tweet");
+                    throw new Error(`Failed to post tweet part: ${content}`);
                 }
 
                 // Store this tweet's ID so the next tweet will reply to it
@@ -425,7 +447,11 @@ export class TwitterPostClient {
                 }
             }
         } catch (error) {
-            elizaLogger.error("Error sending tweet:", error);
+            elizaLogger.error("Error sending tweet:", error, {
+                cleanedContent,
+                newTweetContent,
+            });
+            throw error; // Re-throw to ensure the error is properly handled
         }
     }
 
