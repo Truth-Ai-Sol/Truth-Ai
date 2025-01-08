@@ -83,3 +83,49 @@ async function waitForRateLimit(resetTime) {
         console.error("An error occurred:", error)
     }
 })()
+
+// Browser-based deletion method
+// To use this method:
+// 1. Go to your Twitter profile
+// 2. Open browser developer tools (F12)
+// 3. Paste this code in the console and press Enter
+// This will automatically click through and delete tweets on your profile page
+async function deleteItems() {
+    let menu = document.querySelector("[data-testid='caret']")
+
+    while (menu) {
+        // Click the menu button
+        menu.click()
+        console.log("Clicked menu button")
+        await new Promise((resolve) => setTimeout(resolve, 100))
+
+        // Click the delete button in the menu
+        const deleteButton = document.querySelectorAll("div[role='menuitem']")[0]
+        if (deleteButton) {
+            deleteButton.click()
+            console.log("Clicked delete button")
+            await new Promise((resolve) => setTimeout(resolve, 100))
+        } else {
+            console.log("Delete button not found")
+            break
+        }
+
+        // Click the confirmation button in the modal
+        const confirmButton = document.querySelector("[data-testid='confirmationSheetConfirm']")
+        if (confirmButton) {
+            confirmButton.click()
+            console.log("Clicked confirmation button")
+            await new Promise((resolve) => setTimeout(resolve, 100))
+        } else {
+            console.log("Confirmation button not found")
+            break
+        }
+
+        // Reassign menu to check if there are more items to delete
+        menu = document.querySelector("[data-testid='caret']")
+    }
+}
+
+// deleteItems() // Uncomment to run immediately
+
+
