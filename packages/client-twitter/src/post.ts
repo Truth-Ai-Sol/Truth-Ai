@@ -43,9 +43,6 @@ export const twitterActionTemplate =
 {{bio}}
 {{postDirections}}
 
-Use these terms to guide your response but only if they are relevant to the post:
-{{terms}}
-
 Guidelines:
 - ONLY engage with content that DIRECTLY relates to character's core interests
 - Direct mentions are priority IF they are on-topic
@@ -69,37 +66,53 @@ Tweet:
     postActionResponseFooter;
 
 /**
- * Truncate text to fit within the Twitter character limit, ensuring it ends at a complete sentence.
+ * Splits content into tweet-sized chunks for threading
  */
-function truncateToCompleteSentence(
-    text: string,
-    maxTweetLength: number
-): string {
-    if (text.length <= maxTweetLength) {
-        return text;
+function splitIntoThread(content: string, maxLength: number = 280): string[] {
+    // If content fits in one tweet, return as-is
+    if (content.length <= maxLength) {
+        return [content];
     }
 
-    // Attempt to truncate at the last period within the limit
-    const lastPeriodIndex = text.lastIndexOf(".", maxTweetLength - 1);
-    if (lastPeriodIndex !== -1) {
-        const truncatedAtPeriod = text.slice(0, lastPeriodIndex + 1).trim();
-        if (truncatedAtPeriod.length > 0) {
-            return truncatedAtPeriod;
+    const tweets: string[] = [];
+    const words = content.split(" ");
+    let currentTweet = "";
+    let tweetCount = 1;
+
+    for (const word of words) {
+        // Check if adding the word (plus thread number and space) would exceed limit
+        const prefix = `${tweetCount}) `;
+        const potentialTweet = currentTweet
+            ? `${prefix}${currentTweet} ${word}`
+            : `${prefix}${word}`;
+
+        if (potentialTweet.length <= maxLength) {
+            currentTweet = currentTweet ? `${currentTweet} ${word}` : word;
+        } else {
+            // Push current tweet and start new one
+            tweets.push(`${tweetCount}) ${currentTweet}`);
+            tweetCount++;
+            currentTweet = word;
         }
     }
 
-    // If no period, truncate to the nearest whitespace within the limit
-    const lastSpaceIndex = text.lastIndexOf(" ", maxTweetLength - 1);
-    if (lastSpaceIndex !== -1) {
-        const truncatedAtSpace = text.slice(0, lastSpaceIndex).trim();
-        if (truncatedAtSpace.length > 0) {
-            return truncatedAtSpace + "...";
-        }
+    // Add remaining content
+    if (currentTweet) {
+        tweets.push(`${tweetCount}) ${currentTweet}`);
     }
 
-    // Fallback: Hard truncate and add ellipsis
-    const hardTruncated = text.slice(0, maxTweetLength - 3).trim();
-    return hardTruncated + "...";
+    return tweets;
+}
+
+function truncateToCompleteSentence(text: string, maxLength: number): string {
+    if (text.length <= maxLength) return text;
+
+    const lastSentence = text.slice(0, maxLength).lastIndexOf(".");
+    if (lastSentence > 0) {
+        return text.slice(0, lastSentence + 1).trim();
+    }
+
+    return text.slice(0, text.lastIndexOf(" ", maxLength - 3)).trim() + "...";
 }
 
 export class TwitterPostClient {
@@ -375,31 +388,42 @@ export class TwitterPostClient {
         try {
             elizaLogger.log(`Posting new tweet:\n`);
 
-            let result;
+            // Split content into thread if needed
+            const threadParts = splitIntoThread(cleanedContent);
+            let previousTweetId: string | undefined;
 
-            if (cleanedContent.length > DEFAULT_MAX_TWEET_LENGTH) {
-                result = await this.handleNoteTweet(
+            // Post each part of the thread
+            for (const content of threadParts) {
+                const result = await this.sendStandardTweet(
                     client,
-                    runtime,
-                    cleanedContent
+                    content,
+                    previousTweetId
                 );
-            } else {
-                result = await this.sendStandardTweet(client, cleanedContent);
+
+                if (!result) {
+                    throw new Error("Failed to post tweet");
+                }
+
+                // Store this tweet's ID so the next tweet will reply to it
+                previousTweetId = result.rest_id;
+
+                // Only process the first tweet for memory/caching purposes
+                if (content === threadParts[0]) {
+                    const tweet = this.createTweetObject(
+                        result,
+                        client,
+                        twitterUsername
+                    );
+
+                    await this.processAndCacheTweet(
+                        runtime,
+                        client,
+                        tweet,
+                        roomId,
+                        newTweetContent
+                    );
+                }
             }
-
-            const tweet = this.createTweetObject(
-                result,
-                client,
-                twitterUsername
-            );
-
-            await this.processAndCacheTweet(
-                runtime,
-                client,
-                tweet,
-                roomId,
-                newTweetContent
-            );
         } catch (error) {
             elizaLogger.error("Error sending tweet:", error);
         }

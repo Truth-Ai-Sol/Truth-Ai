@@ -1,7 +1,7 @@
 {
     "name": "Elon Musk",
-    "clients": [],
-    "modelProvider": "anthropic",
+    "clients": ["twitter"],
+    "modelProvider": "grok",
     "settings": {
         "secrets": {},
         "voice": {

@@ -1,7 +1,7 @@
 {
     "name": "Donald Trump",
-    "clients": [],
-    "modelProvider": "anthropic",
+    "clients": ["twitter"],
+    "modelProvider": "grok",
     "settings": {
         "secrets": {},
         "voice": {
