@@ -90,42 +90,106 @@ async function waitForRateLimit(resetTime) {
 // 2. Open browser developer tools (F12)
 // 3. Paste this code in the console and press Enter
 // This will automatically click through and delete tweets on your profile page
-async function deleteItems() {
-    let menu = document.querySelector("[data-testid='caret']")
+// (async function deleteItems() {
+//     let menu = document.querySelector("[data-testid='caret']")
 
-    while (menu) {
-        // Click the menu button
-        menu.click()
-        console.log("Clicked menu button")
-        await new Promise((resolve) => setTimeout(resolve, 100))
+//     while (menu) {
+//         // Click the menu button
+//         menu.click()
+//         console.log("Clicked menu button")
+//         await new Promise((resolve) => setTimeout(resolve, 100))
 
-        // Click the delete button in the menu
-        const deleteButton = document.querySelectorAll("div[role='menuitem']")[0]
-        if (deleteButton) {
-            deleteButton.click()
-            console.log("Clicked delete button")
-            await new Promise((resolve) => setTimeout(resolve, 100))
-        } else {
-            console.log("Delete button not found")
-            break
-        }
+//         // Click the delete button in the menu
+//         const deleteButton = document.querySelectorAll("div[role='menuitem']")[0]
+//         if (deleteButton) {
+//             deleteButton.click()
+//             console.log("Clicked delete button")
+//             await new Promise((resolve) => setTimeout(resolve, 100))
+//         } else {
+//             console.log("Delete button not found")
+//             break
+//         }
 
-        // Click the confirmation button in the modal
-        const confirmButton = document.querySelector("[data-testid='confirmationSheetConfirm']")
-        if (confirmButton) {
-            confirmButton.click()
-            console.log("Clicked confirmation button")
-            await new Promise((resolve) => setTimeout(resolve, 100))
-        } else {
-            console.log("Confirmation button not found")
-            break
-        }
+//         // Click the confirmation button in the modal
+//         const confirmButton = document.querySelector("[data-testid='confirmationSheetConfirm']")
+//         if (confirmButton) {
+//             confirmButton.click()
+//             console.log("Clicked confirmation button")
+//             await new Promise((resolve) => setTimeout(resolve, 100))
+//         } else {
+//             console.log("Confirmation button not found")
+//             break
+//         }
 
-        // Reassign menu to check if there are more items to delete
-        menu = document.querySelector("[data-testid='caret']")
-    }
-}
+//         // Reassign menu to check if there are more items to delete
+//         menu = document.querySelector("[data-testid='caret']")
+//     }
+// })()
 
-// deleteItems() // Uncomment to run immediately
 
+// (async function deleteReplies() {
+//     // Find all tweet elements
+//     const tweets = Array.from(document.querySelectorAll('[data-testid="tweet"]'))
+
+//     // Find the first tweet containing "TeeJay"
+//     let tweet = tweets.find(tweetEl => {
+//         const tweetText = tweetEl.textContent || ''
+//         return tweetText.includes('TeeJay')
+//     })
+
+//     while (tweet) {
+//         // Find the menu button within this specific tweet
+//         const menu = tweet.querySelector('[data-testid="caret"]')
+//         if (!menu) {
+//             console.log("Menu button not found")
+//             break
+//         }
+
+//         // Click the menu button
+//         menu.click()
+//         console.log("Clicked menu button")
+//         await new Promise((resolve) => setTimeout(resolve, 100))
+
+//         // Click the delete button in the menu
+//         const deleteButton = document.querySelectorAll("div[role='menuitem']")[0]
+//         if (deleteButton) {
+//             deleteButton.click()
+//             console.log("Clicked delete button")
+//             await new Promise((resolve) => setTimeout(resolve, 100))
+//         } else {
+//             console.log("Delete button not found")
+//             continue
+//         }
+
+//         // Click the confirmation button in the modal
+//         const confirmButton = document.querySelector("[data-testid='confirmationSheetConfirm']")
+//         if (confirmButton) {
+//             confirmButton.click()
+//             console.log("Clicked confirmation button")
+//             await new Promise((resolve) => setTimeout(resolve, 100))
+//         } else {
+//             console.log("Confirmation button not found")
+//             continue
+//         }
+
+//         // Add a longer delay between deletions to ensure the UI updates
+//         await new Promise((resolve) => setTimeout(resolve, 100))
+
+//         // Find the next tweet containing "TeeJay"
+//         const remainingTweets = Array.from(document.querySelectorAll('[data-testid="tweet"]'))
+//         tweet = remainingTweets.find(tweetEl => {
+//             const tweetText = tweetEl.textContent || ''
+//             return tweetText.includes('TeeJay')
+//         })
+//     }
+// })()
+
+// (async function removeLikes() {
+//     const unlikeButtons = document.querySelectorAll("[data-testId='unlike']")
+
+//     for (const unlikeButton of unlikeButtons) {
+//         unlikeButton.click()
+//         console.log("Clicked unlike button")
+//     }
+// })()
 
