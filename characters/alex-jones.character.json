@@ -1,7 +1,7 @@
 {
     "name": "Alex Jones",
     "clients": ["twitter"],
-    "modelProvider": "grok",
+    "modelProvider": "anthropic",
     "settings": {
         "secrets": {},
         "voice": {
