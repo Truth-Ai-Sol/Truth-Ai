@@ -505,23 +505,25 @@ export class TwitterPostClient {
             });
 
             console.log("=== DEBUG: Generated tweet content ===");
-            console.log(newTweetContent);
+            const formattedContent = newTweetContent
+                .replace(/\\n\\n/g, "\n\n")
+                .replace(/\\n/g, "\n");
 
             if (this.isDryRun) {
                 elizaLogger.info(
-                    `Dry run: would have posted tweet: ${newTweetContent}`
+                    `Dry run: would have posted tweet: ${formattedContent}`
                 );
                 return;
             }
 
             try {
-                elizaLogger.log(`Posting new tweet:\n ${newTweetContent}`);
+                elizaLogger.log(`Posting new tweet:\n ${formattedContent}`);
                 await this.postTweet(
                     this.runtime,
                     this.client,
-                    newTweetContent,
+                    formattedContent,
                     roomId,
-                    newTweetContent,
+                    formattedContent,
                     this.twitterUsername
                 );
             } catch (error) {
@@ -559,7 +561,8 @@ export class TwitterPostClient {
         const cleanedResponse = response
             .replace(/```json\s*/g, "") // Remove ```json
             .replace(/```\s*/g, "") // Remove any remaining ```
-            .replaceAll(/\\n/g, "\n")
+            .replace(/\\n\\n/g, "\n\n") // Convert literal \n\n to actual line breaks
+            .replace(/\\n/g, "\n") // Convert any remaining \n to line breaks
             .trim();
 
         // Try to parse as JSON first
