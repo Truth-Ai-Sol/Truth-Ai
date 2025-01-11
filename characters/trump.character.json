@@ -8,6 +8,13 @@
             "model": "en_US-male-medium"
         }
     },
+    "clientConfig": {
+        "twitter": {
+            "envUsernameKey": "TWITTER_USERNAME_TRUMP",
+            "envEmailKey": "TWITTER_EMAIL_TRUMP",
+            "envPasswordKey": "TWITTER_PASSWORD_TRUMP"
+        }
+    },
     "plugins": [],
     "bio": [
         "secured the Southern Border COMPLETELY",

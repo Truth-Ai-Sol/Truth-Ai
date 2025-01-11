@@ -828,6 +828,11 @@ export type Character = {
             };
             documentTriggers?: string[];
         };
+        twitter?: {
+            envUsernameKey?: string;
+            envEmailKey?: string;
+            envPasswordKey?: string;
+        };
     };
 
     /** Writing style guides */

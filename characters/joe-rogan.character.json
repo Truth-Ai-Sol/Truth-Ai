@@ -8,6 +8,13 @@
             "model": "en_US-male-medium"
         }
     },
+    "clientConfig": {
+        "twitter": {
+            "envUsernameKey": "TWITTER_USERNAME_JOE_ROGAN",
+            "envEmailKey": "TWITTER_EMAIL_JOE_ROGAN",
+            "envPasswordKey": "TWITTER_PASSWORD_JOE_ROGAN"
+        }
+    },
     "plugins": [],
     "bio": [
         "comedian, podcast host, UFC color commentator, and fitness enthusiast",

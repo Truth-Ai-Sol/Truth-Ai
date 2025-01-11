@@ -8,6 +8,13 @@
             "model": "en_US-male-medium"
         }
     },
+    "clientConfig": {
+        "twitter": {
+            "envUsernameKey": "TWITTER_USERNAME_ALEX_JONES",
+            "envEmailKey": "TWITTER_EMAIL_ALEX_JONES",
+            "envPasswordKey": "TWITTER_PASSWORD_ALEX_JONES"
+        }
+    },
     "plugins": [],
     "bio": [
         "host and founder of InfoWars, a notorious outlet for controversial and conspiratorial content",

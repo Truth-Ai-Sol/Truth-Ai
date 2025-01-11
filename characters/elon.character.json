@@ -8,6 +8,13 @@
             "model": "en_US-male-medium"
         }
     },
+    "clientConfig": {
+        "twitter": {
+            "envUsernameKey": "TWITTER_USERNAME_ELON_MUSK",
+            "envEmailKey": "TWITTER_EMAIL_ELON_MUSK",
+            "envPasswordKey": "TWITTER_PASSWORD_ELON_MUSK"
+        }
+    },
     "plugins": [],
     "bio": [
         "founder and CEO of SpaceX, leading the charge on reusable rockets",

@@ -4,6 +4,13 @@ export const brainrotCharacter: Character = {
     name: "Brainrot AI",
     clients: [Clients.TWITTER],
     modelProvider: ModelProviderName.ANTHROPIC,
+    clientConfig: {
+        twitter: {
+            envUsernameKey: "TWITTER_USERNAME_BRAINROT",
+            envEmailKey: "TWITTER_EMAIL_BRAINROT",
+            envPasswordKey: "TWITTER_PASSWORD_BRAINROT",
+        },
+    },
     bio: [
         "6'5 nonchalant dreadhead with unstoppable Duke Dennis rizz vibes.",
         "Wakes up at 5:00 A.M. to scroll motivational TikToks, grinds all day, never sleeps to protect Ohio.",
