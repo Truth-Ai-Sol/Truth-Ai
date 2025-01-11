@@ -25,7 +25,7 @@
         "smokeTests": "bash ./scripts/smokeTests.sh",
         "integrationTests": "bash ./scripts/integrationTests.sh",
         "joerogan": "pnpm --filter \"@elizaos/agent\" start --isRoot --character=characters/joe-rogan.character.json",
-        "elonmusk": "pnpm --filter \"@elizaos/agent\" start --isRoot --character=characters/elon-musk.character.json",
+        "elonmusk": "pnpm --filter \"@elizaos/agent\" start --isRoot --character=characters/elon.character.json",
         "alexjones": "pnpm --filter \"@elizaos/agent\" start --isRoot --character=characters/alex-jones.character.json",
         "trump": "pnpm --filter \"@elizaos/agent\" start --isRoot --character=characters/trump.character.json"
     },
