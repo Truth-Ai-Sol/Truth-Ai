@@ -1,8 +1,4 @@
-import {
-    parseBooleanFromText,
-    IAgentRuntime,
-    elizaLogger,
-} from "@elizaos/core";
+import { parseBooleanFromText, IAgentRuntime } from "@elizaos/core";
 import { z, ZodError } from "zod";
 
 export const DEFAULT_MAX_TWEET_LENGTH = 280;
@@ -108,12 +104,6 @@ export async function validateTwitterConfig(
     const emailKey = runtime.character.clientConfig.twitter.envEmailKey;
     const passwordKey = runtime.character.clientConfig.twitter.envPasswordKey;
 
-    elizaLogger.log("Twitter Config Keys:", {
-        usernameKey,
-        emailKey,
-        passwordKey,
-    });
-
     try {
         const twitterConfig = {
             TWITTER_DRY_RUN:
@@ -217,8 +207,6 @@ export async function validateTwitterConfig(
                         process.env.TWITTER_SPACES_ENABLE
                 ) ?? false,
         };
-
-        elizaLogger.log("Twitter Config:", twitterConfig);
 
         return twitterEnvSchema.parse(twitterConfig);
     } catch (error) {
