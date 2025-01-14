@@ -390,14 +390,14 @@ export class MessageManager {
                 });
 
                 // simulate discord typing while generating a response
-                const stopTyping = this.simulateTyping(message)
+                const stopTyping = this.simulateTyping(message);
 
                 const responseContent = await this._generateResponse(
                     memory,
                     state,
                     context
                 ).finally(() => {
-                    stopTyping()
+                    stopTyping();
                 });
 
                 responseContent.text = responseContent.text?.trim();
@@ -1172,12 +1172,12 @@ export class MessageManager {
                         (m) => m.userId === this.client.user?.id
                     ).length;
 
-                    // Reduce responses if we've been talking a lot
-                    if (ourMessageCount > 2) {
-                        // Exponentially decrease chance to respond
+                    // More aggressive reduction in response frequency
+                    if (ourMessageCount > 1) {
+                        // Changed from 2
                         const responseChance = Math.pow(
-                            0.5,
-                            ourMessageCount - 2
+                            0.3, // Reduced from 0.5
+                            ourMessageCount - 1
                         );
                         if (Math.random() > responseChance) {
                             return false;
@@ -1332,7 +1332,7 @@ export class MessageManager {
         typingLoop();
 
         return function stopTyping() {
-            typing = false
-        }
+            typing = false;
+        };
     }
 }
