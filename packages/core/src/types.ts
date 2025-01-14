@@ -796,6 +796,9 @@ export type Character = {
     /** Optional client-specific config */
     clientConfig?: {
         discord?: {
+            envApplicationIdKey?: string;
+            envApiTokenKey?: string;
+            envVoiceChannelIdKey?: string;
             shouldIgnoreBotMessages?: boolean;
             shouldIgnoreDirectMessages?: boolean;
             shouldRespondOnlyToMentions?: boolean;

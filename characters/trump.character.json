@@ -1,6 +1,6 @@
 {
     "name": "Donald Trump",
-    "clients": ["twitter"],
+    "clients": ["discord"],
     "modelProvider": "anthropic",
     "settings": {
         "secrets": {},
@@ -9,6 +9,11 @@
         }
     },
     "clientConfig": {
+        "discord": {
+            "envApplicationIdKey": "DISCORD_APPLICATION_ID_TRUMP",
+            "envApiTokenKey": "DISCORD_API_TOKEN_TRUMP",
+            "envVoiceChannelIdKey": "DISCORD_VOICE_CHANNEL_ID_TRUMP"
+        },
         "twitter": {
             "envUsernameKey": "TWITTER_USERNAME_TRUMP",
             "envEmailKey": "TWITTER_EMAIL_TRUMP",

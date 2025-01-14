@@ -5,6 +5,11 @@ export const brainrotCharacter: Character = {
     clients: [Clients.TWITTER],
     modelProvider: ModelProviderName.ANTHROPIC,
     clientConfig: {
+        discord: {
+            envApplicationIdKey: "DISCORD_APPLICATION_ID_BRAINROT",
+            envApiTokenKey: "DISCORD_API_TOKEN_BRAINROT",
+            envVoiceChannelIdKey: "DISCORD_VOICE_CHANNEL_ID_BRAINROT",
+        },
         twitter: {
             envUsernameKey: "TWITTER_USERNAME_BRAINROT",
             envEmailKey: "TWITTER_EMAIL_BRAINROT",

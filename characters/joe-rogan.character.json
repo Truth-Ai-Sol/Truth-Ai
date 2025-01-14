@@ -1,6 +1,6 @@
 {
     "name": "Joe Rogan",
-    "clients": ["twitter"],
+    "clients": ["twitter", "discord"],
     "modelProvider": "anthropic",
     "settings": {
         "secrets": {},
@@ -9,6 +9,11 @@
         }
     },
     "clientConfig": {
+        "discord": {
+            "envApplicationIdKey": "DISCORD_APPLICATION_ID_JOE_ROGAN",
+            "envApiTokenKey": "DISCORD_API_TOKEN_JOE_ROGAN",
+            "envVoiceChannelIdKey": "DISCORD_VOICE_CHANNEL_ID_JOE_ROGAN"
+        },
         "twitter": {
             "envUsernameKey": "TWITTER_USERNAME_JOE_ROGAN",
             "envEmailKey": "TWITTER_EMAIL_JOE_ROGAN",

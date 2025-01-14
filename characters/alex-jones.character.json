@@ -1,6 +1,6 @@
 {
     "name": "Alex Jones",
-    "clients": ["twitter"],
+    "clients": ["twitter", "discord"],
     "modelProvider": "anthropic",
     "settings": {
         "secrets": {},
@@ -9,6 +9,11 @@
         }
     },
     "clientConfig": {
+        "discord": {
+            "envApplicationIdKey": "DISCORD_APPLICATION_ID_ALEX_JONES",
+            "envApiTokenKey": "DISCORD_API_TOKEN_ALEX_JONES",
+            "envVoiceChannelIdKey": "DISCORD_VOICE_CHANNEL_ID_ALEX_JONES"
+        },
         "twitter": {
             "envUsernameKey": "TWITTER_USERNAME_ALEX_JONES",
             "envEmailKey": "TWITTER_EMAIL_ALEX_JONES",

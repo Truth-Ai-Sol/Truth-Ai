@@ -27,6 +27,7 @@ import channelStateProvider from "./providers/channelState.ts";
 import voiceStateProvider from "./providers/voiceState.ts";
 import { VoiceManager } from "./voice.ts";
 import { PermissionsBitField } from "discord.js";
+import { validateDiscordConfig } from "./environment.ts";
 
 export class DiscordClient extends EventEmitter {
     apiToken: string;
@@ -38,45 +39,68 @@ export class DiscordClient extends EventEmitter {
 
     constructor(runtime: IAgentRuntime) {
         super();
+        this.runtime = runtime;
 
-        this.apiToken = runtime.getSetting("DISCORD_API_TOKEN") as string;
-        this.client = new Client({
-            intents: [
-                GatewayIntentBits.Guilds,
-                GatewayIntentBits.DirectMessages,
-                GatewayIntentBits.GuildVoiceStates,
-                GatewayIntentBits.MessageContent,
-                GatewayIntentBits.GuildMessages,
-                GatewayIntentBits.DirectMessageTyping,
-                GatewayIntentBits.GuildMessageTyping,
-                GatewayIntentBits.GuildMessageReactions,
-            ],
-            partials: [
-                Partials.Channel,
-                Partials.Message,
-                Partials.User,
-                Partials.Reaction,
-            ],
+        // Add initialization logging
+        console.log("Debug: Starting Discord client initialization", {
+            hasRuntime: !!runtime,
+            hasCharacter: !!runtime.character,
+            hasClientConfig: !!runtime.character?.clientConfig,
         });
 
-        this.runtime = runtime;
-        this.voiceManager = new VoiceManager(this);
-        this.messageManager = new MessageManager(this, this.voiceManager);
+        // Validate config before creating client
+        validateDiscordConfig(runtime)
+            .then((config) => {
+                this.apiToken = config.DISCORD_API_TOKEN;
+                this.client = new Client({
+                    intents: [
+                        GatewayIntentBits.Guilds,
+                        GatewayIntentBits.DirectMessages,
+                        GatewayIntentBits.GuildVoiceStates,
+                        GatewayIntentBits.MessageContent,
+                        GatewayIntentBits.GuildMessages,
+                        GatewayIntentBits.DirectMessageTyping,
+                        GatewayIntentBits.GuildMessageTyping,
+                        GatewayIntentBits.GuildMessageReactions,
+                    ],
+                    partials: [
+                        Partials.Channel,
+                        Partials.Message,
+                        Partials.User,
+                        Partials.Reaction,
+                    ],
+                });
 
-        this.client.once(Events.ClientReady, this.onClientReady.bind(this));
-        this.client.login(this.apiToken);
+                this.voiceManager = new VoiceManager(this);
+                this.messageManager = new MessageManager(
+                    this,
+                    this.voiceManager
+                );
 
-        this.setupEventListeners();
+                this.client.once(
+                    Events.ClientReady,
+                    this.onClientReady.bind(this)
+                );
+                this.setupEventListeners();
 
-        this.runtime.registerAction(joinvoice);
-        this.runtime.registerAction(leavevoice);
-        this.runtime.registerAction(summarize);
-        this.runtime.registerAction(chat_with_attachments);
-        this.runtime.registerAction(transcribe_media);
-        this.runtime.registerAction(download_media);
+                // Login after everything is set up
+                this.client.login(this.apiToken);
 
-        this.runtime.providers.push(channelStateProvider);
-        this.runtime.providers.push(voiceStateProvider);
+                // Register actions and providers
+                this.runtime.registerAction(joinvoice);
+                this.runtime.registerAction(leavevoice);
+                this.runtime.registerAction(summarize);
+                this.runtime.registerAction(chat_with_attachments);
+                this.runtime.registerAction(transcribe_media);
+                this.runtime.registerAction(download_media);
+
+                this.runtime.providers.push(channelStateProvider);
+                this.runtime.providers.push(voiceStateProvider);
+            })
+            .catch((error) => {
+                console.error("Failed to initialize Discord client:", error);
+                throw error;
+            });
     }
 
     private setupEventListeners() {

@@ -1,6 +1,6 @@
 {
     "name": "Elon Musk",
-    "clients": ["twitter"],
+    "clients": ["twitter", "discord"],
     "modelProvider": "anthropic",
     "settings": {
         "secrets": {},
@@ -9,6 +9,11 @@
         }
     },
     "clientConfig": {
+        "discord": {
+            "envApplicationIdKey": "DISCORD_APPLICATION_ID_ELON_MUSK",
+            "envApiTokenKey": "DISCORD_API_TOKEN_ELON_MUSK",
+            "envVoiceChannelIdKey": "DISCORD_VOICE_CHANNEL_ID_ELON_MUSK"
+        },
         "twitter": {
             "envUsernameKey": "TWITTER_USERNAME_ELON_MUSK",
             "envEmailKey": "TWITTER_EMAIL_ELON_MUSK",
