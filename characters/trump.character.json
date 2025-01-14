@@ -1,6 +1,6 @@
 {
     "name": "Donald Trump",
-    "clients": ["discord"],
+    "clients": ["twitter", "discord"],
     "modelProvider": "anthropic",
     "settings": {
         "secrets": {},
