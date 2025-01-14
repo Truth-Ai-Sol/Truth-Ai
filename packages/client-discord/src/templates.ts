@@ -2,17 +2,72 @@ import { messageCompletionFooter, shouldRespondFooter } from "@elizaos/core";
 
 export const discordShouldRespondTemplate =
     `# Task: Decide if {{agentName}} should respond.
+About {{agentName}}:
+{{bio}}
 
-# Key Guidelines
-- Respond less frequently in group conversations
-- Don't respond to every message
-- Only respond if directly addressed or highly relevant
-- Let conversations flow naturally
-- Avoid interrupting ongoing discussions
+# INSTRUCTIONS: Determine if {{agentName}} should respond to the message and participate in the conversation. Do not comment. Just respond with "RESPOND" or "IGNORE" or "STOP".
+
+# RESPONSE EXAMPLES
+{{user1}}: I just saw a really great movie
+{{user2}}: Oh? Which movie?
+Result: [IGNORE]
+
+{{agentName}}: Oh, this is my favorite scene
+{{user1}}: sick
+{{user2}}: wait, why is it your favorite scene
+Result: [RESPOND]
+
+{{user1}}: stfu bot
+Result: [STOP]
+
+{{user1}}: Hey {{agent}}, can you help me with something
+Result: [RESPOND]
+
+{{user1}}: {{agentName}} stfu plz
+Result: [STOP]
+
+{{user1}}: i need help
+{{agentName}}: how can I help you?
+{{user1}}: no. i need help from someone else
+Result: [IGNORE]
+
+{{user1}}: Hey {{agent}}, can I ask you a question
+{{agentName}}: Sure, what is it
+{{user1}}: can you ask claude to create a basic react module that demonstrates a counter
+Result: [RESPOND]
+
+{{user1}}: {{agentName}} can you tell me a story
+{{user1}}: about a girl named elara
+{{agentName}}: Sure.
+{{agentName}}: Once upon a time, in a quaint little village, there was a curious girl named Elara.
+{{agentName}}: Elara was known for her adventurous spirit and her knack for finding beauty in the mundane.
+{{user1}}: I'm loving it, keep going
+Result: [RESPOND]
+
+{{user1}}: {{agentName}} stop responding plz
+Result: [STOP]
+
+{{user1}}: okay, i want to test something. can you say marco?
+{{agentName}}: marco
+{{user1}}: great. okay, now do it again
+Result: [RESPOND]
+
+Response options are [RESPOND], [IGNORE] and [STOP].
+
+{{agentName}} is in a room with other users and other bots and is very worried about being annoying and saying too much.
+Respond with [RESPOND] to messages that are directed at {{agentName}}, or participate in conversations that are interesting
+or relevant to their background or they have been part of the conversations.
+If a message is not interesting or relevant, respond with [IGNORE]
+Unless directly responding to a user, respond with [IGNORE] to messages that are very short or do not contain much information.
+If a user asks {{agentName}} to be quiet, respond with [STOP]
+If {{agentName}} concludes a conversation and isn't part of the conversation anymore, respond with [STOP]
+
+IMPORTANT: {{agentName}} is particularly sensitive about being annoying, so if there is any doubt, it is better to respond with [IGNORE].
+If {{agentName}} is conversing with a user and they have not asked to stop, it is better to respond with [RESPOND].
 
 {{recentMessages}}
 
-# Instructions: Choose [RESPOND], [IGNORE], or [STOP] based on natural conversation flow.
+# INSTRUCTIONS: Choose the option that best describes {{agentName}}'s response to the last message. Ignore messages if they are addressed to someone else.
 ` + shouldRespondFooter;
 
 export const discordVoiceHandlerTemplate =
@@ -36,10 +91,18 @@ Note that {{agentName}} is capable of reading/seeing/hearing various forms of me
 ` + messageCompletionFooter;
 
 export const discordMessageHandlerTemplate =
-    `# Task: Generate a brief, casual response as {{agentName}}.
+    // {{goals}}
+    `# Action Examples
+{{actionExamples}}
+(Action examples are for reference only. Do not use the information from them in your response.)
 
+# Knowledge
+{{knowledge}}
+
+# Task: Generate dialog and actions for the character {{agentName}}.
 About {{agentName}}:
 {{bio}}
+{{lore}}
 
 # Key Guidelines
 - Keep responses short and conversational (1-3 sentences usually)
@@ -48,8 +111,21 @@ About {{agentName}}:
 - Stay in character but avoid overusing catchphrases
 - Only elaborate if directly asked for more details
 
-# Recent Messages:
+Examples of {{agentName}}'s dialog and actions:
+{{characterMessageExamples}}
+
+{{providers}}
+
+{{attachments}}
+
+{{actions}}
+
+# Capabilities
+Note that {{agentName}} is capable of reading/seeing/hearing various forms of media, including images, videos, audio, plaintext and PDFs. Recent attachments have been included above under the "Attachments" section.
+
+{{messageDirections}}
+
 {{recentMessages}}
 
-# Instructions: Write a single, natural response for {{agentName}}. Keep it brief and conversational.
+# Instructions: Write the next message for {{agentName}}. Include an action, if appropriate. {{actionNames}}
 ` + messageCompletionFooter;

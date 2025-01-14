@@ -1172,12 +1172,12 @@ export class MessageManager {
                         (m) => m.userId === this.client.user?.id
                     ).length;
 
-                    // More aggressive reduction in response frequency
-                    if (ourMessageCount > 1) {
-                        // Changed from 2
+                    // Reduce responses if we've been talking a lot
+                    if (ourMessageCount > 2) {
+                        // Exponentially decrease chance to respond
                         const responseChance = Math.pow(
-                            0.3, // Reduced from 0.5
-                            ourMessageCount - 1
+                            0.5,
+                            ourMessageCount - 2
                         );
                         if (Math.random() > responseChance) {
                             return false;
