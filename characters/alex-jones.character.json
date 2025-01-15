@@ -1,7 +1,7 @@
 {
     "name": "Alex Jones",
     "clients": ["twitter", "discord"],
-    "modelProvider": "anthropic",
+    "modelProvider": "grok",
     "settings": {
         "secrets": {},
         "voice": {
