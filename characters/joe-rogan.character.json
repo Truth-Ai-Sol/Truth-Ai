@@ -1,7 +1,7 @@
 {
     "name": "Joe Rogan",
     "clients": ["twitter", "discord"],
-    "modelProvider": "grok",
+    "modelProvider": "anthropic",
     "settings": {
         "secrets": {},
         "voice": {
