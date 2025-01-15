@@ -1,7 +1,7 @@
 {
     "name": "Alex Jones",
     "clients": ["twitter", "discord"],
-    "modelProvider": "groq",
+    "modelProvider": "grok",
     "settings": {
         "secrets": {},
         "voice": {

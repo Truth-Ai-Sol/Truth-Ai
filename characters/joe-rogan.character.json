@@ -1,7 +1,7 @@
 {
     "name": "Joe Rogan",
     "clients": ["twitter", "discord"],
-    "modelProvider": "groq",
+    "modelProvider": "grok",
     "settings": {
         "secrets": {},
         "voice": {
