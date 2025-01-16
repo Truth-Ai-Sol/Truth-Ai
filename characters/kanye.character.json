@@ -1,7 +1,7 @@
 {
     "name": "Kanye West - aka Yeezy",
     "clients": ["twitter", "discord"],
-    "modelProvider": "anthropic",
+    "modelProvider": "heurist",
     "settings": {
         "secrets": {},
         "voice": {
