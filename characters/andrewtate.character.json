@@ -10,14 +10,14 @@
     },
     "clientConfig": {
         "discord": {
-            "envApplicationIdKey": "DISCORD_APPLICATION_ID_TATE",
-            "envApiTokenKey": "DISCORD_API_TOKEN_TATE",
-            "envVoiceChannelIdKey": "DISCORD_VOICE_CHANNEL_ID_TATE"
+            "envApplicationIdKey": "DISCORD_APPLICATION_ID_ANDREW_TATE",
+            "envApiTokenKey": "DISCORD_API_TOKEN_ANDREW_TATE",
+            "envVoiceChannelIdKey": "DISCORD_VOICE_CHANNEL_ID_ANDREW_TATE"
         },
         "twitter": {
-            "envUsernameKey": "TWITTER_USERNAME_TATE",
-            "envEmailKey": "TWITTER_EMAIL_TATE",
-            "envPasswordKey": "TWITTER_PASSWORD_TATE"
+            "envUsernameKey": "TWITTER_USERNAME_ANDREW_TATE",
+            "envEmailKey": "TWITTER_EMAIL_ANDREW_TATE",
+            "envPasswordKey": "TWITTER_PASSWORD_ANDREW_TATE"
         }
     },
     "plugins": [],
