@@ -1,6 +1,6 @@
 {
     "name": "Tristan Tate",
-    "clients": ["twitter"],
+    "clients": ["twitter", "discord"],
     "modelProvider": "anthropic",
     "settings": {
         "secrets": {},
