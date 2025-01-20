@@ -352,7 +352,7 @@ export function getTokenForProvider(
     }
 }
 
-function initializeDatabase(dataDir: string) {
+async function initializeDatabase(dataDir: string) {
     if (process.env.POSTGRES_URL) {
         elizaLogger.info("Initializing PostgreSQL connection...");
         const db = new PostgresDatabaseAdapter({
@@ -375,8 +375,20 @@ function initializeDatabase(dataDir: string) {
     } else {
         const filePath =
             process.env.SQLITE_FILE ?? path.resolve(dataDir, "db.sqlite");
-        // ":memory:";
+
         const db = new SqliteDatabaseAdapter(new Database(filePath));
+
+        await db
+            .init()
+            .then(() => {
+                elizaLogger.success(
+                    "Successfully connected to SQLite database"
+                );
+            })
+            .catch((error) => {
+                elizaLogger.error("Failed to connect to SQLite:", error);
+            });
+
         return db;
     }
 }
@@ -676,17 +688,15 @@ async function startAgent(
             fs.mkdirSync(dataDir, { recursive: true });
         }
 
-        db = initializeDatabase(dataDir) as IDatabaseAdapter &
+        db = (await initializeDatabase(dataDir)) as IDatabaseAdapter &
             IDatabaseCacheAdapter;
-
-        await db.init();
 
         const cache = initializeCache(
             process.env.CACHE_STORE ?? CacheStore.DATABASE,
             character,
             "",
             db
-        ); // "" should be replaced with dir for file system caching. THOUGHTS: might probably make this into an env
+        );
         const runtime: AgentRuntime = await createAgent(
             character,
             db,
@@ -697,8 +707,15 @@ async function startAgent(
         // start services/plugins/process knowledge
         await runtime.initialize();
 
-        // start assigned clients
-        runtime.clients = await initializeClients(character, runtime);
+        try {
+            // start assigned clients
+            runtime.clients = await initializeClients(character, runtime);
+        } catch (error) {
+            // Log client initialization error but don't throw
+            elizaLogger.error("Error initializing clients:", error);
+            // Set empty clients object to allow agent to continue running
+            runtime.clients = {};
+        }
 
         // add to container
         directClient.registerAgent(runtime);
@@ -712,10 +729,6 @@ async function startAgent(
             `Error starting agent for character ${character.name}:`,
             error
         );
-        elizaLogger.error(error);
-        if (db) {
-            await db.close();
-        }
         throw error;
     }
 }
