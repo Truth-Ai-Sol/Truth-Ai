@@ -30,7 +30,8 @@
         "trump": "pnpm --filter \"@elizaos/agent\" start --isRoot --character=characters/trump.character.json",
         "kanye": "pnpm --filter \"@elizaos/agent\" start --isRoot --character=characters/kanye.character.json",
         "andrewtate": "pnpm --filter \"@elizaos/agent\" start --isRoot --character=characters/andrewtate.character.json",
-        "tristantate": "pnpm --filter \"@elizaos/agent\" start --isRoot --character=characters/tristantate.character.json"
+        "tristantate": "pnpm --filter \"@elizaos/agent\" start --isRoot --character=characters/tristantate.character.json",
+        "goggins": "pnpm --filter \"@elizaos/agent\" start --isRoot --character=characters/goggins.character.json"
     },
     "devDependencies": {
         "@commitlint/cli": "18.6.1",
