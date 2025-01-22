@@ -1,9 +1,8 @@
 // Filter high-engagement tweets from extracted tweets JSON file
 import { readFileSync, writeFileSync } from 'fs'
 
-// const EXTRACTED_DATA_FILE = "data/extracted-tweets/TateTheTalisman.json";
-const EXTRACTED_DATA_FILE = "data/extracted-tweets/TateTheTalisman-filtered.json";
-const TARGET_FILE = "data/extracted-tweets/TateTheTalisman-filtered.json";
+const EXTRACTED_DATA_FILE = "data/extracted-tweets/davidgoggins.json";
+const TARGET_FILE = "data/extracted-tweets/davidgoggins-filtered.json";
 
 
 function filterHighEngagementTweets({ inputPath, outputPath }) {

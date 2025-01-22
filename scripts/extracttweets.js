@@ -1,7 +1,7 @@
 import fs from "fs";
 
-const SCRAPED_DATA_FILE = "data/scraped-tweets/TateTheTalisman-tweets.json";
-const TARGET_FILE = "data/extracted-tweets/TateTheTalisman.json";
+const SCRAPED_DATA_FILE = "data/scraped-tweets/davidgoggins-tweets.json";
+const TARGET_FILE = "data/extracted-tweets/davidgoggins.json";
 
 // Read the scraped data from the JSON file
 const scrapedData = JSON.parse(fs.readFileSync(SCRAPED_DATA_FILE, "utf-8"));
@@ -9,7 +9,7 @@ const scrapedData = JSON.parse(fs.readFileSync(SCRAPED_DATA_FILE, "utf-8"));
 console.log("Total tweets loaded:", scrapedData.length);
 console.log("Sample tweet:", JSON.stringify(scrapedData[0], null, 2));
 
-const usernameToMatch = "TateTheTalisman".toLowerCase();
+const usernameToMatch = "davidgoggins".toLowerCase();
 
 // Extract tweet data with additional metadata
 const extractedTweets = scrapedData

@@ -5,7 +5,7 @@ import path from "path";
 
 dotenv.config();
 
-const TWEETS_FILE = "TateTheTalisman-tweets.json";
+const TWEETS_FILE = "davidgoggins-tweets.json";
 
 // Ensure the output directory exists
 const outputDir = path.resolve(process.cwd(), 'data', 'scraped-tweets');
@@ -46,7 +46,7 @@ const OUTPUT_PATH = path.join(outputDir, TWEETS_FILE);
 
             try {
                 console.log("Starting to fetch tweets...")
-                const tweets = scraper.getTweets("TateTheTalisman", 2000)
+                const tweets = scraper.getTweets("davidgoggins", 2000)
                 let count = 0
 
                 for await (const tweet of tweets) {
